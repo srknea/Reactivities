@@ -35,5 +35,13 @@ namespace Reactivities.API.Controllers
             
             return Ok();
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            await Mediator.Send(new Delete.Command { Id = id });
+
+            return Ok();
+        }
     }
 }
