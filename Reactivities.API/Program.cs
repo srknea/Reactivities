@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Reactivities.Persistence;
 
@@ -22,6 +21,8 @@ builder.Services.AddCors(opt =>{
         policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000");
     });
 });
+
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Reactivities.Application.Activities.List.Handler).Assembly));
 
 var app = builder.Build();
 
