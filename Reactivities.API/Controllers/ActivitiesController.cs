@@ -26,5 +26,14 @@ namespace Reactivities.API.Controllers
             
             return Ok();
         }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> EditActivities(Guid id, Activity activity)
+        {
+            activity.Id = id;
+            await Mediator.Send(new Edit.Command { Activitiy = activity });
+            
+            return Ok();
+        }
     }
 }
