@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using MediatR;
 using Reactivities.Domain;
 using Reactivities.Persistence;
 using System;
@@ -19,23 +20,22 @@ namespace Reactivities.Application.Activities
         public class Handler : IRequestHandler<Command>
         {
             private readonly DataContext _context;
+            private readonly IMapper _mapper;
 
-            public Handler(DataContext context)
+            public Handler(DataContext context, IMapper mapper)
             {
                 _context = context;
+                _mapper = mapper;
             }
 
             public async Task Handle(Command request, CancellationToken cancellationToken)
             {
                 var activity = await _context.Activities.FindAsync(request.Activitiy.Id);
 
-                activity.Title = request.Activitiy.Title ?? activity.Title; // if request.Activitiy.Title is null, then activity.Title will be activity.Title
-                activity.Description = request.Activitiy.Description ?? activity.Description;
+                _mapper.Map(request.Activitiy, activity);
 
                 await _context.SaveChangesAsync();
             }
         }
     }
 }
-
-// Şu an sadece activity.Title ve activity.Description için güncelleme yapılabiliyor...

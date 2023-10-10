@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Reactivities.Application.Core;
 using Reactivities.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,6 +24,7 @@ builder.Services.AddCors(opt =>{
 });
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Reactivities.Application.Activities.List.Handler).Assembly));
+builder.Services.AddAutoMapper(typeof(MappingProfiles).Assembly);
 
 var app = builder.Build();
 
