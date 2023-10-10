@@ -6,7 +6,7 @@ interface Props {
     activities: Activity[];        
 }
 
-export default function ActivityDetails({activities}: Props) {
+export default function ActivityList({activities}: Props) {
     return(
         <Segment>
             <Item.Group divided>
