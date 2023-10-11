@@ -32,6 +32,10 @@ namespace Reactivities.Application.Activities
             {
                 var activity = await _context.Activities.FindAsync(request.Activitiy.Id);
 
+                // TODO: Bu kısımı düzeltmek gerekiyor.
+                //<Form.Input type='date' placeholder='Date' value={activity.date} name='date' onChange={handleInputChange}/>
+                request.Activitiy.Date = DateTime.UtcNow.AddDays(10); // Yukarıdaki satırdan istenilen formatta veri gelmiyor o nedenle geçiçi çözüm olarak bu satır eklendi.
+                //Cannot write DateTime with Kind = Unspecified to PostgreSQL type 'timestamp with time zone', only UTC is supported.
                 _mapper.Map(request.Activitiy, activity);
 
                 await _context.SaveChangesAsync();
