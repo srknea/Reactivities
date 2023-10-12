@@ -27,6 +27,10 @@ namespace Reactivities.Application.Activities
 
             public async Task Handle(Command request, CancellationToken cancellationToken)
             {
+                // TODO: Bu kısımı düzeltmek gerekiyor.
+                request.Activitiy.Date = DateTime.UtcNow.AddDays(10);
+                //Cannot write DateTime with Kind = Unspecified to PostgreSQL type 'timestamp with time zone', only UTC is supported.
+
                 _context.Activities.Add(request.Activitiy);
 
                 await _context.SaveChangesAsync();
