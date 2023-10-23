@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using FluentValidation;
+using MediatR;
 using Reactivities.Domain;
 using Reactivities.Persistence;
 using System;
@@ -14,6 +15,14 @@ namespace Reactivities.Application.Activities
         public class Command : IRequest
         {
             public Activity Activitiy { get; set; }
+        }
+
+        public class CommandValidator : AbstractValidator<Command>
+        {
+            public CommandValidator()
+            {
+                RuleFor(x => x.Activitiy).SetValidator(new ActivityValidator());
+            }
         }
 
         public class Handler : IRequestHandler<Command>

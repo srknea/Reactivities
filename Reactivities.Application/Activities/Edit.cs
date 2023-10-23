@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using MediatR;
 using Reactivities.Domain;
 using Reactivities.Persistence;
@@ -26,6 +27,14 @@ namespace Reactivities.Application.Activities
             {
                 _context = context;
                 _mapper = mapper;
+            }
+
+            public class CommandValidator : AbstractValidator<Command>
+            {
+                public CommandValidator()
+                {
+                    RuleFor(x => x.Activitiy).SetValidator(new ActivityValidator());
+                }
             }
 
             public async Task Handle(Command request, CancellationToken cancellationToken)
