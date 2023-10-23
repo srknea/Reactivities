@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using MediatR;
+using Reactivities.Application.Core;
 using Reactivities.Domain;
 using Reactivities.Persistence;
 using System;
@@ -12,7 +13,7 @@ namespace Reactivities.Application.Activities
 {
     public class Create
     {
-        public class Command : IRequest
+        public class Command : IRequest<Result<Unit>>
         {
             public Activity Activitiy { get; set; }
         }
@@ -25,7 +26,7 @@ namespace Reactivities.Application.Activities
             }
         }
 
-        public class Handler : IRequestHandler<Command>
+        public class Handler : IRequestHandler<Command, Result<Unit>>
         {
             private readonly DataContext _context;
 
@@ -34,7 +35,7 @@ namespace Reactivities.Application.Activities
                 _context = context;
             }
 
-            public async Task Handle(Command request, CancellationToken cancellationToken)
+            public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
                 // TODO: Bu kısımı düzeltmek gerekiyor.
                 request.Activitiy.Date = DateTime.UtcNow.AddDays(10);
@@ -42,7 +43,11 @@ namespace Reactivities.Application.Activities
 
                 _context.Activities.Add(request.Activitiy);
 
-                await _context.SaveChangesAsync();
+                var result = await _context.SaveChangesAsync() > 0;
+
+                if(!result) return Result<Unit>.Failure("Failed to create activity");
+
+                return Result<Unit>.Success(Unit.Value);
             }
         }
 
