@@ -2,9 +2,11 @@ import { Link } from "react-router-dom";
 import { Button, Container, Header, Image, Segment } from "semantic-ui-react";
 import { useStore } from "../../app/stores/store";
 import { observer } from "mobx-react-lite";
+import ModalStore from "../../app/stores/modalStore";
+import LoginForm from "../login/LoginForm";
 
 export default observer(function HomePage() {
-    const {userStore} = useStore();
+    const {userStore, modalStore} = useStore();
     return (
         <Segment inverted textAlign='center' vertical className="masthead">
             <Container text>
@@ -14,15 +16,21 @@ export default observer(function HomePage() {
                 </Header>
                 {userStore.isLoggedIn ? (
                     <>
-                    <Header as='h2' inverted content='Welcome to Reactivities' />
-                    <Button as={Link} to='/activities' size='huge' inverted>
-                        Go to activities!
-                    </Button>
+                        <Header as='h2' inverted content='Welcome to Reactivities' />
+                        <Button as={Link} to='/activities' size='huge' inverted>
+                            Go to activities!
+                        </Button>
                     </>
                 ) : (
-                    <Button as={Link} to='/login' size='huge' inverted>
-                        Login!
-                    </Button>
+                    <>
+                        <Button onClick={() => modalStore.openModal(<LoginForm/>)} size='huge' inverted>
+                            Login!
+                        </Button>
+
+                        <Button onClick={() => modalStore.openModal(<h1>Register</h1>)} size='huge' inverted>
+                            Register!
+                        </Button>
+                    </>
                 )}
             </Container>
         </Segment>
