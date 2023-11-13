@@ -4,6 +4,7 @@ import { useStore } from "../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import ModalStore from "../../app/stores/modalStore";
 import LoginForm from "../login/LoginForm";
+import RegisterForm from "../login/RegisterForm";
 
 export default observer(function HomePage() {
     const {userStore, modalStore} = useStore();
@@ -27,7 +28,7 @@ export default observer(function HomePage() {
                             Login!
                         </Button>
 
-                        <Button onClick={() => modalStore.openModal(<h1>Register</h1>)} size='huge' inverted>
+                        <Button onClick={() => modalStore.openModal(<RegisterForm/>)} size='huge' inverted>
                             Register!
                         </Button>
                     </>
