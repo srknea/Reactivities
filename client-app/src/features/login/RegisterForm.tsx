@@ -5,13 +5,14 @@ import { Button, Header, Label } from "semantic-ui-react";
 import { observer } from "mobx-react-lite";
 import { useStore } from "../../app/stores/store";
 import * as Yup from 'yup';
+import ValidationError from "../errors/ValidationError";
 
 export default observer(function RegisterForm(){
     const {userStore} = useStore();
     return (
         <Formik
             initialValues={{displayName: '', username: '', email: '', password: '', error: null}}
-            onSubmit={(values, {setErrors}) => userStore.register(values).catch(error => setErrors({error: 'Invalid email or password'}))}
+            onSubmit={(values, {setErrors}) => userStore.register(values).catch(error => setErrors({error}))}
             validationSchema={Yup.object({
                 displayName: Yup.string().required(),
                 username: Yup.string().required(),
@@ -20,14 +21,15 @@ export default observer(function RegisterForm(){
             })}
         >
             {({handleSubmit, isSubmitting, errors, isValid, dirty}) => (
-                <Form className='ui form' onSubmit={handleSubmit} autoComplete='off'>
+                <Form className='ui form error' onSubmit={handleSubmit} autoComplete='off'>
                     <Header as='h2' content='Sign up to Reactivities' color='teal' textAlign='center'/>
-                    <MyTextInput name='displayname' placeholder='Display Name'/>
+                    <MyTextInput name='displayName' placeholder='Display Name'/>
                     <MyTextInput name='username' placeholder='Username'/>
                     <MyTextInput name='email' placeholder='Email'/>
                     <MyTextInput name='password' placeholder='Password' type='password'/>
                     <ErrorMessage
-                        name='error' render={() => <Label style={{marginBottom:10}} basic color='red' content={errors.error}/>}
+                        name='error' render={() => 
+                        <ValidationError errors={errors.error as unknown as string[]}/>}
                     />
                     <Button
                         disabled={!isValid || !dirty || isSubmitting} 
