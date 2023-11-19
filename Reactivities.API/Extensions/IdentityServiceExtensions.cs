@@ -9,6 +9,8 @@ using Reactivities.API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Reactivities.Infrastructure.Security;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Reactivities.API.Extensions
 {
@@ -35,6 +37,16 @@ namespace Reactivities.API.Extensions
                         ValidateAudience = false
                     });
 
+            services.AddAuthorization(opt =>
+            {
+                opt.AddPolicy("IsActivityHost", policy =>
+                {
+                    policy.Requirements.Add(new IsHostRequirement());
+                });
+            });
+
+            services.AddTransient<IAuthorizationHandler, IsHostRequirementHandler>();
+            
             services.AddScoped<TokenService>();
 
             return services;
