@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Reactivities.Persistence;
 using System;
 using System.Collections.Generic;
@@ -34,7 +35,10 @@ namespace Reactivities.Infrastructure.Security
             var activityId = Guid.Parse(_httpContextAccessor.HttpContext?.Request.RouteValues.SingleOrDefault(x => x.Key == "id").Value?.ToString());
             // Neden Guid.Parse ettik? : Çünkü RouteValues içerisindeki Value'lar string olarak tutuluyor.
 
-            var attendee = _dbContext.ActivityAttendees.FindAsync(userId, activityId).Result; // async kullanamayız o nedenle Result döndürdük. Çünkü şu an override yapıyoruz !
+            var attendee = _dbContext.ActivityAttendees
+                .AsNoTracking()
+                .SingleOrDefaultAsync(x => x.AppUserId == userId && x.ActivityId == activityId)
+                .Result; // async kullanamayız o nedenle Result döndürdük. Çünkü şu an override yapıyoruz !
 
             if (attendee == null) return Task.CompletedTask;
 
