@@ -1,15 +1,13 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import { Activity, ActivityFormValues } from "../models/activity";
 import agent from "../api/agent";
-import { v4 as uuid } from 'uuid';
 import {format} from 'date-fns';
 import { store } from "./store";
-import { act } from "react-dom/test-utils";
 import { Profile } from "../models/profile";
 
 export default class ActivityStore {  
     activityRegistry = new Map<string, Activity>();
-    selectedActivity: Activity | undefined = undefined;
+    selectedActivity?: Activity = undefined;
     editMode = false;
     loading = false;
     loadingInitial = false;
@@ -35,7 +33,7 @@ export default class ActivityStore {
     loadActivities = async () => {
         this.setLoadingInitial(true);
         try {
-            const  activities  = await agent.Activities.list();
+            const activities = await agent.Activities.list();
             activities.forEach(activity => {
                 this.setActivity(activity);                
             })
@@ -53,17 +51,17 @@ export default class ActivityStore {
             return activity;
         } 
        else{
-        this.setLoadingInitial(true);
-        try {
-            activity = await agent.Activities.details(id);
-            this.setActivity(activity);
-            runInAction(() => this.selectedActivity = activity);
-            this.setLoadingInitial(false);
-            return activity;
-        } catch (error) {
-            console.log(error);
-            this.setLoadingInitial(false);
-        }
+            this.setLoadingInitial(true);
+            try {
+                activity = await agent.Activities.details(id);
+                this.setActivity(activity);
+                runInAction(() => this.selectedActivity = activity);
+                this.setLoadingInitial(false);
+                return activity;
+            } catch (error) {
+                console.log(error);
+                this.setLoadingInitial(false);
+            }
        }
     }
 
@@ -90,12 +88,12 @@ export default class ActivityStore {
 
     createActivity = async (activity: ActivityFormValues) => {
         const user = store.userStore.user;
-        const attendee = new Profile(user!);
+        const profile = new Profile(user!);
         try {
             await agent.Activities.create(activity);
             const newActivity = new Activity(activity);
             newActivity.hostUsername = user!.username;
-            newActivity.attendees = [attendee];
+            newActivity.attendees = [profile];
             this.setActivity(newActivity);
             runInAction(() => {
                 this.selectedActivity = newActivity;
@@ -138,6 +136,7 @@ export default class ActivityStore {
 
     updateAttendance = async () => {
         const user = store.userStore.user;
+        this.loading = true;
         try{
             await agent.Activities.attend(this.selectedActivity!.id);
             runInAction(() => {
@@ -163,7 +162,7 @@ export default class ActivityStore {
         try{
             await agent.Activities.attend(this.selectedActivity!.id);
             runInAction(() => {
-                this.selectedActivity!.isCancelled = !this.selectedActivity?.isCancelled;
+                this.selectedActivity!.isCancelled = !this.selectedActivity!.isCancelled;
                 this.activityRegistry.set(this.selectedActivity!.id, this.selectedActivity!)
             })
         } catch(error){
