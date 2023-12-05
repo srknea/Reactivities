@@ -21,12 +21,14 @@ namespace Reactivities.Application.Photos
         public class Handler : IRequestHandler<Command, Result<Unit>>
         {
             private readonly DataContext _context;
-            private readonly IPhotoAccessor _photoAccessor;
             private readonly IUserAccessor _userAccessor;
-            public Handler()
+
+            public Handler(DataContext context, IUserAccessor userAccessor)
             {
-                
+                _context = context;
+                _userAccessor = userAccessor;
             }
+
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
                 var user = await _context.Users.Include(p => p.Photos)
@@ -40,7 +42,7 @@ namespace Reactivities.Application.Photos
 
                 var currentMain = user.Photos.FirstOrDefault(x => x.IsMain);
 
-                if (currentMain != null) currentMain.Id = request.Id;
+                if (currentMain != null) currentMain.IsMain = false;
 
                 photo.IsMain = true;
 
