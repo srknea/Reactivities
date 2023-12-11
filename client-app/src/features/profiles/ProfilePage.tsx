@@ -8,7 +8,6 @@ import { useStore } from "../../app/stores/store";
 import { useEffect } from "react";
 import LoadingComponent from "../../app/layout/LoadingComponent";
 
-
 export default observer( function ProfilePage() {
     const {username} = useParams<{username: string}>();
     const {profileStore} = useStore();
@@ -24,8 +23,12 @@ export default observer( function ProfilePage() {
        <Grid>
             <Grid.Column width={16}>
                 {profile && 
-                <ProfileHeader profile={profile!}/>}
-                <ProfileContent/>
+                    <>
+                        <ProfileHeader profile={profile}/>
+                        <ProfileContent profile={profile}/>
+                    </>
+                }
+                  
             </Grid.Column>    
        </Grid>
     )
